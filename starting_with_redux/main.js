@@ -42,72 +42,142 @@ const todos = (state = [], action) => {
 }
 
 
+const visibilityFilter = (
+  state = 'SHOW_ALL',
+  action
+) => {
+  switch (action.type){
+    case 'SET_VISIBILITY_FILTER':
+      return action.filter
+    default:
+      return state
+  }
+}
 
-  const testAddTodo = () => {
-    const stateBefore = [];
-    const action = {
-      type: 'ADD_TODO',
+const todoApp = (state = {}, action) => {
+  return {
+    todos: todos(
+      state.todos,
+      action
+    ),
+    visibilityFilter: visibilityFilter(
+      state.visibilityFilter,
+      action
+    )
+  };
+};
+
+const store = createStore(todoApp);
+
+console.log('Initial state:');
+console.log(store.getState());
+console.log('--------------');
+
+console.log('Dispatching ADD_TODO.');
+store.dispatch({
+  type: 'ADD_TODO',
+  id: 0,
+  text: 'Learn Redux'
+});
+console.log('Current state:');
+console.log(store.getState());
+console.log('--------------');
+
+console.log('Dispatching ADD_TODO.');
+store.dispatch({
+  type: 'ADD_TODO',
+  id: 1,
+  text: 'Go shopping'
+});
+console.log('Current state:');
+console.log(store.getState());
+console.log('--------------');
+
+console.log('Dispatching TOGGLE_TODO.');
+store.dispatch({
+  type: 'TOGGLE_TODO',
+  id: 0
+});
+console.log('Current state:');
+console.log(store.getState());
+console.log('--------------');
+
+console.log('Dispatching SET_VISIBILITY_FILTER');
+store.dispatch({
+  type: 'SET_VISIBILITY_FILTER',
+  filter: 'SHOW_COMPLETED'
+});
+console.log('Current state:');
+console.log(store.getState());
+console.log('--------------');
+
+
+
+const testAddTodo = () => {
+  const stateBefore = [];
+  const action = {
+    type: 'ADD_TODO',
+    id: 0,
+    text: 'Learn Redux'
+  }
+  const stateAfter = [
+    {
       id: 0,
-      text: 'Learn Redux'
+      text: 'Learn Redux',
+      complete: false
     }
-    const stateAfter = [
-      {
-        id: 0,
-        text: 'Learn Redux',
-        complete: false
-      }
-    ]
+  ]
 
-    deepFreeze(stateBefore)
-    deepFreeze(action)
+  deepFreeze(stateBefore)
+  deepFreeze(action)
 
-    expect(
-      todos(stateBefore, action)
-    ).toEqual(stateAfter);
-  }
+  expect(
+    todos(stateBefore, action)
+  ).toEqual(stateAfter);
+}
 
-  const testToggleTodo = () => {
-    const stateBefore = [
-      {
-        id: 0,
-        text: 'Learn Redux',
-        complete: false
-      },
-      {
-        id: 1,
-        text: 'Shop for the cat',
-        complete: false
-      }
-
-    ];
-
-    const action = {
-      type: 'TOGGLE_TODO',
-      id: 0
+const testToggleTodo = () => {
+  const stateBefore = [
+    {
+      id: 0,
+      text: 'Learn Redux',
+      complete: false
+    },
+    {
+      id: 1,
+      text: 'Shop for the cat',
+      complete: false
     }
 
-    const stateAfter = [
-      {
-        id: 0,
-        text: 'Learn Redux',
-        complete: true
-      },
-      {
-        id: 1,
-        text: 'Shop for the cat',
-        complete: false
-      }
+  ];
 
-    ]
-
-    deepFreeze(action)
-    deepFreeze(stateBefore)
-
-    expect(
-      todos(stateBefore, action)
-    ).toEqual(stateAfter)
+  const action = {
+    type: 'TOGGLE_TODO',
+    id: 0
   }
 
-  testAddTodo();
-  testToggleTodo();
-  console.log('All tests passed');
+  const stateAfter = [
+    {
+      id: 0,
+      text: 'Learn Redux',
+      complete: true
+    },
+    {
+      id: 1,
+      text: 'Shop for the cat',
+      complete: false
+    }
+
+  ]
+
+  deepFreeze(action)
+  deepFreeze(stateBefore)
+
+  expect(
+    todos(stateBefore, action)
+  ).toEqual(stateAfter)
+}
+
+testAddTodo();
+testToggleTodo();
+console.log('All tests passed');
