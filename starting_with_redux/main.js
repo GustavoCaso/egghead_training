@@ -1,4 +1,4 @@
-import { createStore, combineReducers } from 'redux'
+import { createStore} from 'redux'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import deepFreeze from 'deep-freeze'
@@ -51,6 +51,21 @@ const visibilityFilter = (
       return action.filter
     default:
       return state
+  }
+}
+
+const combineReducers = (reducers) => {
+  return (state = {}, action) => {
+    return Object.keys(reducers).reduce(
+      (nextState, key) => {
+        nextState[key] = reducers[key](
+          state[key],
+          action
+        );
+        return nextState
+      },
+      {}
+    )
   }
 }
 
