@@ -1,4 +1,4 @@
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import todoApp from './reducers';
 
 const logging = (store) => (next) => {
@@ -23,26 +23,16 @@ const promises = (store) => (next) => (action) => {
     return next(action);
 };
 
-const wrapStoreDispatchWithMiddleware = (store, middlewares) => {
-  middlewares.slice().reverse().forEach(middleware =>
-    store.dispatch = middleware(store)(store.dispatch)
-  );
-}
-
-
 const configureStore = () => {
   const middlewares = [promises]
-  const store = createStore(
-    todoApp,
-  );
-
   if (process.env.NODE_ENV != 'production'){
     middlewares.push(logging)
   }
 
-  wrapStoreDispatchWithMiddleware(store, middlewares)
-
-  return store;
+  return createStore(
+    todoApp,
+    applyMiddleware(...middlewares)
+  );
 }
 
 export default configureStore;
