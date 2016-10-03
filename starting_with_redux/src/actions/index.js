@@ -1,15 +1,15 @@
 import { v4 } from 'node-uuid'
 import * as api from '../api';
 
-const receiveTodos = (todos, filter) => ({
+const receiveTodos = (filter, response) => ({
   type: 'RECEIVE_TODOS',
-  todos,
   filter,
+  response,
 })
 
 export const fetchTodos = (filter) =>
-  api.fetchTodos(filter).then(todos =>
-    receiveTodos(todos, filter)
+  api.fetchTodos(filter).then(response =>
+    receiveTodos(filter, response)
   );
 
 export const addTodo = (text) => ({
